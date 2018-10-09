@@ -1,2 +1,3 @@
-# fcm-equisize
-This is the Python implementation of the paper "Clustering with Size Constraints" 
+# Clustering with Size Constraints
+A python implementation of the papar [Clustering with Size Constraints](https://public.ostfalia.de/~klawonn/Papers/hoeppnerklawonn08.pdf)
+

@@ -1,12 +1,16 @@
 import numpy 
 import scipy
+from sklearn.datasets import make_blobs
 from scipy.spatial import distance_matrix
-points = numpy.random.random_sample((10, 2))
-prototypes = numpy.random.random_sample((2, 2))
-d_matrix = numpy.array([[0.34763479, 0.44971272, 0.1523048,   0.78991553,  0.16131734,  0.242627,    0.62175637,  0.56820348,  0.59893423,  0.75974445], [
-             0.34765918, 0.56044309,  0.60183567,  0.20504329,  0.46174492,  0.461370520, 0.39245738,  0.04516625,  0.65495541, 0.3004999]])
-C = 2
-n = 10
+
+
+centers = [[1, 1], [1.3, 1.1], [0.8, 0.9], [1.1, 0.], [.9, 1.1]]
+data, labels_true = make_blobs(centers=centers, n_samples=100)
+points = numpy.array(data)
+prototypes = numpy.array(centers)
+d_matrix = distance_matrix(prototypes, points) * 50
+C = d_matrix.shape[0]
+n = d_matrix.shape[1]
 A = numpy.zeros((C, C))
 for k in range(C):
   for l in range (C):
@@ -27,6 +31,4 @@ for k in range(C):
     for i in range(C):
       foo += d_matrix[k][j] / d_matrix[i][j]
     b[k] += -1. / foo
-print(A)
-print(b)
 print(numpy.linalg.solve(A, b))

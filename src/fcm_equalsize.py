@@ -9,17 +9,16 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 
 
-def solve_beta(d_matrix):
+def solve_beta(d_matrix, beta_0):
   C, n = d_matrix.shape[0], d_matrix.shape[1]
   foo = np.divide(1, np.dot(np.eye(C).repeat(C).reshape(C, C * C), np.divide(np.repeat(d_matrix, C, axis=0), np.tile(d_matrix, (C, 1)))))
   b = n / C - np.sum(foo, axis=1).reshape(C, 1)
   foo = -.5 * foo
   bar = np.divide(1, d_matrix)
   A = np.dot(foo, np.transpose(bar)) + np.diag(np.sum(np.divide(1, 2 * d_matrix), axis=1))
-  A, b = A[1:, 1:], b[1:, :]
-  #print(np.linalg.matrix_rank(A[1:, 1:]))
+  A, b = A[1:, 1:], b[1:, :] - beta_0 * A[1:, 0].reshape(C - 1, 1)
   beta = np.linalg.solve(A, b)
-  beta = np.insert(beta, 0, 0, axis=0) 
+  beta = np.insert(beta, 0, beta_0, axis=0) 
   return beta
 
 
@@ -43,14 +42,14 @@ def update_prototypes(memberships, points, m):
   return prototypes
 
 
-def fcm_equalsize(points, centers, threshold=1e-5, m=2):
+def fcm_equalsize(points, centers, threshold=1e-5, m=2, beta_0 = 0):
   prototypes = np.array(centers)
   C = prototypes.shape[0]
   memberships_ex = np.zeros((C, points.shape[0]))
   errors = []
   while True:
     d_matrix = spatial.distance_matrix(prototypes, points)
-    beta = solve_beta(d_matrix)
+    beta = solve_beta(d_matrix, beta_0)
     alpha = solve_alpha(d_matrix, beta)
     memberships = update_memberships(d_matrix, beta, alpha)
     prototypes = update_prototypes(memberships, points, m)
@@ -67,21 +66,27 @@ if __name__ == "__main__":
   centers = [[0, 5], [1, 4], [2, 3], [3, 2.], [4, 1.1]]
   data, labels_true = make_blobs(centers=centers, n_samples=100)
   points = np.array(data)
-  ans = fcm_equalsize(points, centers, threshold=1e-9)
-  print("迭代次数：")
-  print(len(ans[1]))
-  points_ans = ans[0]
-  print("每类数量：") 
-  stat = {}
-  for x in range(len(centers)):
-    stat[str(x)] = 0
-  for x in ans[0]:
-   stat[str(x)] += 1
-  print(stat)
-  plt.scatter(points[:, 0], points[:, 1], 15, points_ans * 10)
+  std = []
+  for i in range(100):
+    ans = fcm_equalsize(points, centers, threshold=1e-5, m=i)
+    #print("迭代次数：")
+    #print(len(ans[1]))
+    #points_ans = ans[0]
+    #print("每类数量：") 
+    stat = {}
+    for x in range(len(centers)):
+      stat[str(x)] = 0
+    for x in ans[0]:
+      stat[str(x)] += 1
+    #print(stat)
+    #print("方差：")
+    std.append(np.std(np.array([value for key, value in stat.items()])))
+    #plt.scatter(points[:, 0], points[:, 1], 15, points_ans * 10)
+  plt.plot([x for x in range(len(std))], std)
   plt.show()
-  plt.plot([x for x in range(len(ans[1]))], ans[1])
-  plt.show()
+  #plt.show()
+  #plt.plot([x for x in range(len(ans[1]))], ans[1])
+  #plt.show()
   #plt.clf()
   #plt.scatter(points[:, 0], points[:, 1], 8, labels_true * 5)
   #plt.show()

@@ -17,7 +17,6 @@ def solve_beta(d_matrix):
   bar = np.divide(1, d_matrix)
   A = np.dot(foo, np.transpose(bar)) + np.diag(np.sum(np.divide(1, 2 * d_matrix), axis=1))
   beta = np.linalg.solve(A, b)
-  print(np.linalg.det(A))
   return beta
 
 
@@ -41,21 +40,17 @@ def update_prototypes(memberships, points, m):
   return prototypes
 
 
-def fcm_equalsize(points, C=2, threshold=1e-5, m=2):
-  prototypes = np.array([[1, 1], [2, 2], [3, 3], [4, 4.], [5, 5.]])
+def fcm_equalsize(points, centers, threshold=1e-5, m=2):
+  prototypes = np.array(centers)
+  C = prototypes.shape[0]
   memberships_ex = np.zeros((C, points.shape[0]))
-  num = 0
   while True:
     d_matrix = spatial.distance_matrix(prototypes, points)
-    print(d_matrix)
     beta = solve_beta(d_matrix)
     alpha = solve_alpha(d_matrix, beta)
     memberships = update_memberships(d_matrix, beta, alpha)
     prototypes = update_prototypes(memberships, points, m)
-    num += 1
-    print(num)
     if np.linalg.norm(memberships - memberships_ex) < threshold:
-      print(num)
       break
     else:
       memberships_ex = memberships
@@ -63,12 +58,10 @@ def fcm_equalsize(points, C=2, threshold=1e-5, m=2):
 
 
 if __name__ == "__main__":
-  
   centers = [[0, 5], [1, 4], [2, 3], [3, 2.], [4, 1.1]]
   data, labels_true = make_blobs(centers=centers, n_samples=100)
-  points = np.array(data) * 50
-  ans = (fcm_equalsize(points, C=5))
-  print(ans)
+  points = np.array(data)
+  fcm_equalsize(points, centers)
   #plt.scatter(points[:, 0], points[:, 1], 15, ans * 10)
   #plt.show()
   #plt.clf()

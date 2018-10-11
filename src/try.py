@@ -31,4 +31,3 @@ for k in range(C):
     for i in range(C):
       foo += d_matrix[k][j] / d_matrix[i][j]
     b[k] += -1. / foo
-print(np.linalg.solve(A, b))

@@ -67,7 +67,7 @@ if __name__ == "__main__":
   centers = [[0, 5], [1, 4], [2, 3], [3, 2.], [4, 1.1]]
   data, labels_true = make_blobs(centers=centers, n_samples=100)
   points = np.array(data)
-  ans = fcm_equalsize(points, centers)
+  ans = fcm_equalsize(points, centers, threshold=1e-9)
   print("迭代次数：")
   print(len(ans[1]))
   points_ans = ans[0]

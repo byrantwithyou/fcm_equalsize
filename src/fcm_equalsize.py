@@ -68,7 +68,7 @@ if __name__ == "__main__":
   points = np.array(data)
   std = []
   for i in range(5):
-    ans = fcm_equalsize(points, centers, threshold=1e-1, m=i)
+    ans = fcm_equalsize(points, centers, threshold=1e-1, m=4, beta_0=i)
     # print("迭代次数：")
     # print(len(ans[1]))
     points_ans = ans[0]

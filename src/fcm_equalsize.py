@@ -66,23 +66,26 @@ if __name__ == "__main__":
   centers = [[0, 5], [1, 4], [2, 3], [3, 2.], [4, 1.1]]
   data, labels_true = make_blobs(centers=centers, n_samples=1000)
   points = np.array(data)
-  ans = fcm_equalsize(points, centers, threshold=1e-1, m=4)
-  print("迭代次数：")
-  print(len(ans[1]))
-  points_ans = ans[0]
-  print("每类数量：") 
-  stat = {}
-  for x in range(len(centers)):
-    stat[str(x)] = 0
-  for x in points_ans:
-    stat[str(x)] += 1
-  print(stat)
-  print("标准差：")
-  std = np.std(np.array([value for key, value in stat.items()]))
-  print(std)
-  plt.scatter(points[:, 0], points[:, 1], 15, points_ans * 10)
-  plt.show()
-  plt.plot([x for x in range(len(ans[1]))], ans[1])
+  std = []
+  for i in range(5):
+    ans = fcm_equalsize(points, centers, threshold=1e-1, m=i)
+    # print("迭代次数：")
+    # print(len(ans[1]))
+    points_ans = ans[0]
+    # print("每类数量：") 
+    stat = {}
+    for x in range(len(centers)):
+      stat[str(x)] = 0
+    for x in points_ans:
+      stat[str(x)] += 1
+    # print(stat)
+    # print("标准差：")
+    std.append(np.std(np.array([value for key, value in stat.items()])))
+    # print(std)
+  
+  # plt.scatter(points[:, 0], points[:, 1], 15, points_ans * 10)
+  # plt.show()
+  plt.plot([x for x in range(len(std))], std)
   plt.show()
 
   #plt.scatter(points[:, 0], points[:, 1], 8, labels_true * 5)

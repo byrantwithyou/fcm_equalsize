@@ -67,8 +67,8 @@ if __name__ == "__main__":
   data, labels_true = make_blobs(centers=centers, n_samples=1000)
   points = np.array(data)
   std = []
-  for i in range(5):
-    ans = fcm_equalsize(points, centers, threshold=1e-1, m=4, beta_0=i)
+  for i in range(10):
+    ans = fcm_equalsize(points, centers, threshold=float("1e-%i" % (i)), m=4, beta_0=0)
     # print("迭代次数：")
     # print(len(ans[1]))
     points_ans = ans[0]
